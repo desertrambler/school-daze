@@ -4,25 +4,22 @@ import axios from 'axios'
 
 const username = ref("")
 const password = ref("")
-const respMessage = ref("")
 
 const login = async () => {
-  const response = await fetch('http://127.0.0.1:5000/api/v1/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  try {
+    const response = await axios.put('http://127.0.0.1:5000/api/v1/login', {
       username: username.value,
       password: password.value,
-    }),
-  });
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  if (response.ok) {
-    const data = await response.json();
-    console.log('Login successful:', data);
-  } else {
-    console.log('Login failed');
+    console.log('Login successful:', response.data);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+  console.log('Login failed:', error.response ? error.response.data : error.message);
   }
 };
 </script>
