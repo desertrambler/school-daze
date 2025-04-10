@@ -4,23 +4,25 @@ import axios from 'axios'
 
 const username = ref("")
 const password = ref("")
+const respMessage = ref("")
 
 const login = async () => {
-  alert("jello")
-  try {
-    const response = await axios.post('http://localhost:5000/login', {
+  const response = await fetch('http://127.0.0.1:5000/api/v1/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
       username: username.value,
       password: password.value,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
-      }
-    });
+    }),
+  });
 
-    console.log('Login successful:', response.data)
-  } catch (error) {
-    console.error('Login failed:', error.response?.data || error.message)
+  if (response.ok) {
+    const data = await response.json();
+    console.log('Login successful:', data);
+  } else {
+    console.log('Login failed');
   }
 };
 </script>
@@ -29,24 +31,22 @@ const login = async () => {
   <main class="min-h-screen flex justify-center items-center bg-black">
     <div id="signupContainer" class="max-w-sm w-full bg-red-900 p-6 rounded-lg shadow-lg">
       <h2 class="text-3xl font-extrabold text-center mb-6">Login</h2>
-      <form>
+      <form @submit.prevent="login">
         <!-- Username -->
         <div class="mb-4">
-          {{ username }}
           <label for="username" class="block text-lg font-medium text-gray-400 mb-2">Username</label>
           <input type="text" v-model="username" class="w-full p-3 border border-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
         </div>
 
         <!-- Password -->
         <div class="mb-6">
-          {{ password }}
           <label for="password" class="block text-lg font-medium text-gray-400 mb-2">Password</label>
           <input type="password" v-model="password" id="password" name="password" class="w-full p-3 border border-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" required>
         </div>
 
         <!-- Submit Button -->
         <div class="flex justify-center">
-          <button @click="login()"
+          <button type="submit"
           class="w-full py-3 bg-red-700 text-gray-400 font-bold rounded-md hover:bg-red-600 transition-colors duration-300">
             Log In
           </button>
